@@ -1,0 +1,2 @@
+include ":PearXLib2"
+project(":PearXLib2").projectDir = file("../PearXLib2")
