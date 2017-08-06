@@ -1,10 +1,8 @@
 package ru.pearx.botico.test;
 
 import ru.pearx.botico.Botico;
-import ru.pearx.botico.commands.model.BResponse;
-import ru.pearx.botico.commands.model.BUser;
-import ru.pearx.lib.i18n.I18n;
-import ru.pearx.lib.i18n.I18nLoaderResources;
+import ru.pearx.botico.model.BResponse;
+import ru.pearx.botico.model.BUser;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -26,7 +24,7 @@ public class TestRunner
                 String s = scan.nextLine();
                 if(s.equals("quit"))
                     return;
-                BUser user = new BUser(System.getProperty("user.name"), System.getProperty("user.name"));
+                BUser user = new BUser(System.getProperty("user.name"), Integer.toString(System.getProperty("user.name").hashCode()));
                 if(botico.hasCommand(s, user))
                 {
                     BResponse resp = botico.useCommand(s, user);

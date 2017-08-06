@@ -1,4 +1,4 @@
-package ru.pearx.botico.commands.model;
+package ru.pearx.botico.model;
 
 import java.io.InputStream;
 

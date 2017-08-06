@@ -22,14 +22,12 @@ public class BI18nManager extends I18nManager
 {
     public Path pathConfig;
     private Map<String, String> localesForUsers;
-    private I18n defaultI18n;
 
     private Botico botico;
 
-    public void prepare(Botico b)
+    public BI18nManager(Botico b)
     {
         botico = b;
-        defaultI18n = createI18n(b.config.defaultLanguage);
         pathConfig = b.path.resolve("locales.json");
     }
 
@@ -64,15 +62,16 @@ public class BI18nManager extends I18nManager
     @Override
     public I18n createI18n(String locale)
     {
-        I18n<I18nLoaderResources> i18n = new I18n<>(new I18nLoaderResources(), "en");
-        i18n.getLoader().getPaths().add("assets/botico/lang");
+        I18nLoaderResources loader = new I18nLoaderResources();
+        loader.getPaths().add("assets/botico/lang");
+        I18n i18n = new I18n(loader, "en");
         i18n.load(locale);
         return i18n;
     }
 
     public I18n getForUser(String id)
     {
-        return localesForUsers.containsKey(id) ? get(localesForUsers.get(id)) : defaultI18n;
+        return localesForUsers.containsKey(id) ? get(localesForUsers.get(id)) : get(botico.config.defaultLanguage);
     }
 
     public void setForUser(String id, String locale)

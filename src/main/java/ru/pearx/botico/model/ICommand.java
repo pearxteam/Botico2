@@ -1,4 +1,4 @@
-package ru.pearx.botico.commands.model;
+package ru.pearx.botico.model;
 
 import ru.pearx.botico.Botico;
 import ru.pearx.lib.i18n.I18n;

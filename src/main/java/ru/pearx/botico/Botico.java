@@ -9,10 +9,13 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.FileAppender;
 import org.slf4j.LoggerFactory;
 import ru.pearx.botico.commands.CommandAbout;
-import ru.pearx.botico.commands.model.BArgs;
-import ru.pearx.botico.commands.model.BResponse;
-import ru.pearx.botico.commands.model.BUser;
-import ru.pearx.botico.commands.model.ICommand;
+import ru.pearx.botico.commands.CommandLocale;
+import ru.pearx.botico.commands.CommandRussianRoulette;
+import ru.pearx.botico.commands.CommandTimeout;
+import ru.pearx.botico.model.BArgs;
+import ru.pearx.botico.model.BResponse;
+import ru.pearx.botico.model.BUser;
+import ru.pearx.botico.model.ICommand;
 import ru.pearx.botico.config.BConfig;
 import ru.pearx.lib.D;
 
@@ -23,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /*
@@ -35,7 +39,8 @@ public class Botico
     public BConfig config;
     public Logger log;
     public List<ICommand> commands = new ArrayList<>();
-    public BI18nManager i18n = new BI18nManager();
+    public BI18nManager i18n;
+    public BTimeoutManager timeouts;
     public Random rand = new Random();
 
     public Path path;
@@ -101,7 +106,15 @@ public class Botico
         }
         loadConfig();
 
-        loadI18n();
+        log.info("Loading I18n...");
+        i18n = new BI18nManager(this);
+        i18n.load();
+        log.info("I18n loaded!");
+
+        log.info("Loading the timeout manager...");
+        timeouts = new BTimeoutManager(this);
+        timeouts.load();
+        log.info("The timeout manager successfully loaded!");
 
         log.info("Adding commands...");
         addCommands();
@@ -125,7 +138,7 @@ public class Botico
             map.put("alias1", "help 2");
             map.put("numberpls", "random 10");
             ex.aliases = map;
-            ex.owners = new String[] {"0", "1"};
+            ex.admins = new String[] {"0", "1"};
             try(FileWriter wr = new FileWriter(pathConfig.toString()))
             {
                 BConfig.GSON.toJson(ex, wr);
@@ -148,17 +161,12 @@ public class Botico
         }
     }
 
-    private void loadI18n()
-    {
-        log.info("Loading I18n...");
-        i18n.prepare(this);
-        i18n.load();
-        log.info("I18n loaded!");
-    }
-
     public void addCommands()
     {
         commands.add(new CommandAbout());
+        commands.add(new CommandLocale());
+        commands.add(new CommandRussianRoulette());
+        commands.add(new CommandTimeout());
     }
 
     public boolean hasCommand(String input, BUser user)
@@ -185,7 +193,6 @@ public class Botico
         return false;
     }
 
-    //todo support for config's lineBreaks
     public BResponse useCommand(String input, BUser user, boolean group, List<BUser> chatMembers)
     {
         if(!input.startsWith(config.prefix))
@@ -206,8 +213,14 @@ public class Botico
             {
                 if(name.equals(cmdName))
                 {
+                    if(!timeouts.isFree(user.getId()))
+                        return new BResponse(i18n.getForUser(user.getId()).format("timeout.text", ChronoUnit.SECONDS.between(LocalDateTime.now(), timeouts.getTimeout(user.getId()))));
+                    log.info(user.toString() + " executed a command \"" + input + "\".");
                     String jargs = cmd.contains(" ") ? cmd.substring(cmd.indexOf(" ") + 1) : "";
-                    return com.use(new BArgs(cmd, cmdName, jargs, jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, i18n.getForUser(user.getId())));
+                    BResponse resp = com.use(new BArgs(cmd, cmdName, jargs, jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, i18n.getForUser(user.getId())));
+                    if(!config.lineBreaks)
+                        resp.setText(resp.getText().replace("\r\n", "; ").replace("\r", "; ").replace("\n", "; "));
+                    return resp;
                 }
             }
         }

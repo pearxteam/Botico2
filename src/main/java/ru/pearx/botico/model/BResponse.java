@@ -1,4 +1,4 @@
-package ru.pearx.botico.commands.model;
+package ru.pearx.botico.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,18 @@ public class BResponse
         return text;
     }
 
+    public void setText(String text)
+    {
+        this.text = text;
+    }
+
     public List<BFile> getFiles()
     {
         return files;
+    }
+
+    public void setFiles(List<BFile> files)
+    {
+        this.files = files;
     }
 }

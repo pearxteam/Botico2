@@ -13,7 +13,7 @@ public class BConfig
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public String defaultLanguage;
-    public String[] owners;
+    public String[] admins;
     public String prefix;
     public boolean linksInsteadOfImages;
     public boolean lineBreaks;
