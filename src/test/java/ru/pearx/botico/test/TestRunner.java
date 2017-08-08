@@ -1,10 +1,13 @@
 package ru.pearx.botico.test;
 
 import ru.pearx.botico.Botico;
+import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.BUser;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
 /*
@@ -31,6 +34,14 @@ public class TestRunner
                     if(!resp.getText().equals(""))
                     {
                         System.out.println(resp.getText());
+                    }
+                    for(BFile b : resp.getFiles())
+                    {
+                        try(InputStream str = b.getStream())
+                        {
+                            Files.copy(str, botico.path.resolve(b.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                        System.out.println("[File] " + botico.path.resolve(b.getName()));
                     }
                 }
             }

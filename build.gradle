@@ -8,11 +8,13 @@ repositories {
 }
 
 dependencies {
-    compile project("PearXLib2")
+    compile project(":PearXLib2")
+    compile project(":PearXLib2-Thirdparty")
     compile "com.google.code.gson:gson:2.8.1"
     compile "ch.qos.logback:logback-core:1.2.3"
     compile "org.slf4j:slf4j-api:1.7.25"
     compile "ch.qos.logback:logback-classic:1.2.3"
+    compile "org.xerial:sqlite-jdbc:3.20.0"
 
     testCompile "junit:junit:4.12"
 }

@@ -1,2 +1,5 @@
 include ":PearXLib2"
 project(":PearXLib2").projectDir = file("../PearXLib2")
+
+include ":PearXLib2-Thirdparty"
+project(":PearXLib2-Thirdparty").projectDir = file("../PearXLib2-Thirdparty")

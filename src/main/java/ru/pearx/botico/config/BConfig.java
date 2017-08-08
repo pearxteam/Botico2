@@ -19,4 +19,6 @@ public class BConfig
     public boolean lineBreaks;
     public int textLimit;
     public Map<String, String> aliases;
+    public int commandsOnOneHelpPage;
+    public String[] googleApiKeys;
 }

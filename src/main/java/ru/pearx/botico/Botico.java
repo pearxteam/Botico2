@@ -8,16 +8,15 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.FileAppender;
 import org.slf4j.LoggerFactory;
-import ru.pearx.botico.commands.CommandAbout;
-import ru.pearx.botico.commands.CommandLocale;
-import ru.pearx.botico.commands.CommandRussianRoulette;
-import ru.pearx.botico.commands.CommandTimeout;
+import ru.pearx.botico.commands.*;
 import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.BUser;
 import ru.pearx.botico.model.ICommand;
 import ru.pearx.botico.config.BConfig;
 import ru.pearx.lib.D;
+import ru.pearx.lib.i18n.I18n;
+import ru.pearx.lib.thirdparty.GoogleApiUser;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -42,6 +41,8 @@ public class Botico
     public BI18nManager i18n;
     public BTimeoutManager timeouts;
     public Random rand = new Random();
+    public GoogleApiUser gapi;
+    public BSqlManager sql;
 
     public Path path;
     public Path pathConfig;
@@ -106,6 +107,12 @@ public class Botico
         }
         loadConfig();
 
+        log.info("Loading the SQL manager...");
+        sql = new BSqlManager(this);
+        log.info("The SQL manager successfully loaded!");
+
+        gapi = new GoogleApiUser(config.googleApiKeys);
+
         log.info("Loading I18n...");
         i18n = new BI18nManager(this);
         i18n.load();
@@ -139,6 +146,7 @@ public class Botico
             map.put("numberpls", "random 10");
             ex.aliases = map;
             ex.admins = new String[] {"0", "1"};
+            ex.commandsOnOneHelpPage = 5;
             try(FileWriter wr = new FileWriter(pathConfig.toString()))
             {
                 BConfig.GSON.toJson(ex, wr);
@@ -161,12 +169,31 @@ public class Botico
         }
     }
 
+    /*
+    ToDo:
+    -Question
+    -Answer
+    -Things
+    -Dictionary
+    -Picture
+    -Custom
+    -Wolfram
+    -Wiki
+    -Who
+    -Wall
+    -Reactor
+    -Random
+     */
     public void addCommands()
     {
+        commands.add(new CommandHelp(this));
         commands.add(new CommandAbout());
         commands.add(new CommandLocale());
         commands.add(new CommandRussianRoulette());
         commands.add(new CommandTimeout());
+        commands.add(new CommandTurn());
+        commands.add(new CommandAstral());
+        commands.add(new CommandImage());
     }
 
     public boolean hasCommand(String input, BUser user)
@@ -181,9 +208,10 @@ public class Botico
             if(alias.equals(cmd))
                 return true;
         }
+        I18n loc = i18n.getForUser(user.getId());
         for(ICommand com : commands)
         {
-            for(String name : com.getNames(this, i18n.getForUser(user.getId())))
+            for(String name : com.getNames(this, loc))
             {
                 if(name.equals(cmd))
                     return true;
@@ -207,17 +235,19 @@ public class Botico
                 cmdName = entr.getValue();
             }
         }
+        I18n loc = i18n.getForUser(user.getId());
         for(ICommand com : commands)
         {
-            for(String name : com.getNames(this, i18n.getForUser(user.getId())))
+            for(String name : com.getNames(this, loc))
             {
                 if(name.equals(cmdName))
                 {
                     if(!timeouts.isFree(user.getId()))
-                        return new BResponse(i18n.getForUser(user.getId()).format("timeout.text", ChronoUnit.SECONDS.between(LocalDateTime.now(), timeouts.getTimeout(user.getId()))));
+                        return new BResponse(loc.format("timeout.text", ChronoUnit.SECONDS.between(LocalDateTime.now(), timeouts.getTimeout(user.getId()))));
+
                     log.info(user.toString() + " executed a command \"" + input + "\".");
                     String jargs = cmd.contains(" ") ? cmd.substring(cmd.indexOf(" ") + 1) : "";
-                    BResponse resp = com.use(new BArgs(cmd, cmdName, jargs, jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, i18n.getForUser(user.getId())));
+                    BResponse resp = com.use(new BArgs(cmd, cmdName, jargs, jargs.equals("") ? new String[]{} : jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, loc));
                     if(!config.lineBreaks)
                         resp.setText(resp.getText().replace("\r\n", "; ").replace("\r", "; ").replace("\n", "; "));
                     return resp;

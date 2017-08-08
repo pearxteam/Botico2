@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,42 +21,25 @@ import java.util.Map;
  */
 public class BI18nManager extends I18nManager
 {
-    public Path pathConfig;
-    private Map<String, String> localesForUsers;
-
     private Botico botico;
 
     public BI18nManager(Botico b)
     {
         botico = b;
-        pathConfig = b.path.resolve("locales.json");
-    }
-
-    public void save()
-    {
-        try(FileWriter wr = new FileWriter(pathConfig.toString()))
-        {
-            BConfig.GSON.toJson(localesForUsers, wr);
-        }
-        catch (IOException e)
-        {
-            botico.log.error("Can't save the locales config file!");
-        }
     }
 
     public void load()
     {
-        try(FileReader rdr = new FileReader(pathConfig.toString()))
+        try(Connection conn = botico.sql.connect())
         {
-            localesForUsers = BConfig.GSON.fromJson(rdr, new TypeToken<HashMap<String, String>>(){}.getType());
+            try(Statement st = conn.createStatement())
+            {
+                st.execute("CREATE TABLE IF NOT EXISTS `i18n` (`id` VARCHAR(128) NOT NULL, `locale` VARCHAR(8) NOT NULL, UNIQUE (`id`));");
+            }
         }
-        catch (FileNotFoundException e)
+        catch (SQLException e)
         {
-            localesForUsers = new HashMap<>();
-        }
-        catch (IOException e)
-        {
-            botico.log.error("Can't load the locales config file!");
+            botico.log.error("Can't create the I18n manager table!", e);
         }
     }
 
@@ -64,19 +48,46 @@ public class BI18nManager extends I18nManager
     {
         I18nLoaderResources loader = new I18nLoaderResources();
         loader.getPaths().add("assets/botico/lang");
-        I18n i18n = new I18n(loader, "en");
+        I18n i18n = new I18n(loader, botico.config.defaultLanguage);
         i18n.load(locale);
         return i18n;
     }
 
     public I18n getForUser(String id)
     {
-        return localesForUsers.containsKey(id) ? get(localesForUsers.get(id)) : get(botico.config.defaultLanguage);
+        try(Connection conn = botico.sql.connect())
+        {
+            try(PreparedStatement st = conn.prepareStatement("SELECT `locale` FROM `i18n` WHERE `id` = ?;"))
+            {
+                st.setString(1, id);
+                ResultSet set = st.executeQuery();
+                if(set.next())
+                {
+                    return get(set.getString("locale"));
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            botico.log.error("Can't get a locale for user!", e);
+        }
+        return get(botico.config.defaultLanguage);
     }
 
     public void setForUser(String id, String locale)
     {
-        localesForUsers.put(id, locale);
-        save();
+        try(Connection conn = botico.sql.connect())
+        {
+            try(PreparedStatement st = conn.prepareStatement("INSERT OR REPLACE INTO `i18n`(`id`, `locale`) VALUES(?, ?)"))
+            {
+                st.setString(1, id);
+                st.setString(2, locale);
+                st.executeUpdate();
+            }
+        }
+        catch (SQLException e)
+        {
+            botico.log.error("Can't set locale for user!", e);
+        }
     }
 }
