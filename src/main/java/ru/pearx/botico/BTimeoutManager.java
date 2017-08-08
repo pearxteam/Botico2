@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,64 +18,87 @@ import java.util.Map;
  */
 public class BTimeoutManager
 {
-    public Path path;
-
     private Botico botico;
-
-    public Map<String, LocalDateTime> map;
 
     public BTimeoutManager(Botico b)
     {
         this.botico = b;
-        path = b.path.resolve("timeout.json");
     }
 
     public void load()
     {
-        try(FileReader rdr = new FileReader(path.toString()))
+        try(Connection conn = botico.sql.connect())
         {
-            map = BConfig.GSON.fromJson(rdr, new TypeToken<HashMap<String, LocalDateTime>>(){}.getType());
+            try(Statement st = conn.createStatement())
+            {
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS `timeouts` (`id` VARCHAR(255) NOT NULL, `expiresIn` DATETIME NOT NULL, UNIQUE (`id`));");
+            }
         }
-        catch (FileNotFoundException e)
+        catch (SQLException e)
         {
-            map = new HashMap<>();
-        }
-        catch (IOException e)
-        {
-            botico.log.error("Can't load timeout manager's data!", e);
+            botico.log.error("Can't create the timeouts manager table!", e);
         }
     }
 
-    public void save()
-    {
-        try(FileWriter wr = new FileWriter(path.toString()))
-        {
-            BConfig.GSON.toJson(map, wr);
-        }
-        catch (IOException e)
-        {
-            botico.log.error("Can't save timeout manager's data!", e);
-        }
-    }
     public void setTimeout(String id, LocalDateTime to)
     {
-        map.put(id, to);
-        save();
+        try(Connection conn = botico.sql.connect())
+        {
+            try(PreparedStatement st = conn.prepareStatement("INSERT OR REPLACE INTO `timeouts` (`id`, `expiresIn`) VALUES(?, ?);"))
+            {
+                st.setString(1, id);
+                st.setTimestamp(2, Timestamp.valueOf(to));
+                st.executeUpdate();
+            }
+        }
+        catch (SQLException e)
+        {
+            botico.log.error("Can't set timeout!", e);
+        }
     }
 
     public LocalDateTime getTimeout(String id)
     {
-        return map.get(id);
+        try(Connection conn = botico.sql.connect())
+        {
+            try(PreparedStatement st = conn.prepareStatement("SELECT `expiresIn` FROM `timeouts` WHERE `id` = ?;"))
+            {
+                st.setString(1, id);
+                try(ResultSet set = st.executeQuery())
+                {
+                    if(set.next())
+                    {
+                        return set.getTimestamp("expiresIn").toLocalDateTime();
+                    }
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            botico.log.error("Can't get timeout!", e);
+        }
+        return null;
     }
 
     public boolean isFree(String id)
     {
-        if(!map.containsKey(id))
+        LocalDateTime to = getTimeout(id);
+        if(to == null)
             return true;
-        if(map.get(id).isBefore(LocalDateTime.now()))
+        if(to.isBefore(LocalDateTime.now()))
         {
-            map.remove(id);
-            save();
+            try(Connection conn = botico.sql.connect())
+            {
+                try(PreparedStatement st = conn.prepareStatement("DELETE FROM `timeouts` WHERE `id` = ?;"))
+                {
+                    st.setString(1, id);
+                    st.executeUpdate();
+                }
+            }
+            catch (SQLException e)
+            {
+                botico.log.error("Can't remove expired timeout!", e);
+            }
             return true;
         }
         return false;

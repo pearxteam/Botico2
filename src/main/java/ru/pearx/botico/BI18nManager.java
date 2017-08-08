@@ -34,7 +34,7 @@ public class BI18nManager extends I18nManager
         {
             try(Statement st = conn.createStatement())
             {
-                st.execute("CREATE TABLE IF NOT EXISTS `i18n` (`id` VARCHAR(128) NOT NULL, `locale` VARCHAR(8) NOT NULL, UNIQUE (`id`));");
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS `i18n` (`id` VARCHAR(255) NOT NULL, `locale` VARCHAR(255) NOT NULL, UNIQUE (`id`));");
             }
         }
         catch (SQLException e)
@@ -60,10 +60,12 @@ public class BI18nManager extends I18nManager
             try(PreparedStatement st = conn.prepareStatement("SELECT `locale` FROM `i18n` WHERE `id` = ?;"))
             {
                 st.setString(1, id);
-                ResultSet set = st.executeQuery();
-                if(set.next())
+                try(ResultSet set = st.executeQuery())
                 {
-                    return get(set.getString("locale"));
+                    if (set.next())
+                    {
+                        return get(set.getString("locale"));
+                    }
                 }
             }
         }
