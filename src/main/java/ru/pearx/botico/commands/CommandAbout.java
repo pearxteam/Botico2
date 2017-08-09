@@ -17,6 +17,6 @@ public class CommandAbout extends CommandImpl
     @Override
     public BResponse use(BArgs args)
     {
-        return new BResponse(args.getI18n().format(args.getBotico().config.lineBreaks ? "command.about.text" : "command.about.text.oneline", args.getI18n().getCurrentLocale(), args.getBotico().clientName, System.getProperty("java.vm.name"), System.getProperty("java.vm.version"), System.getProperty("java.runtime.name"), System.getProperty("java.runtime.version"), System.getProperty("os.name"), (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024, Runtime.getRuntime().totalMemory() / 1024));
+        return new BResponse(args.getI18n().format(args.getBotico().config.lineBreaks ? "command.about.text" : "command.about.text.oneline", args.getI18n().getCurrentLocale(), args.getBotico().getClientConfig().getName(), System.getProperty("java.vm.name"), System.getProperty("java.vm.version"), System.getProperty("java.runtime.name"), System.getProperty("java.runtime.version"), System.getProperty("os.name"), (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024, Runtime.getRuntime().totalMemory() / 1024));
     }
 }

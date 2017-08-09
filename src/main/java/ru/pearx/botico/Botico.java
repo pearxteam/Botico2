@@ -9,10 +9,8 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.FileAppender;
 import org.slf4j.LoggerFactory;
 import ru.pearx.botico.commands.*;
-import ru.pearx.botico.model.BArgs;
-import ru.pearx.botico.model.BResponse;
-import ru.pearx.botico.model.BUser;
-import ru.pearx.botico.model.ICommand;
+import ru.pearx.botico.config.CustomCommandsConfig;
+import ru.pearx.botico.model.*;
 import ru.pearx.botico.config.BConfig;
 import ru.pearx.lib.D;
 import ru.pearx.lib.i18n.I18n;
@@ -33,9 +31,10 @@ import java.util.*;
  */
 public class Botico
 {
-    public String clientName;
+    private IClientSpecificConfig clientConfig;
 
     public BConfig config;
+    public CustomCommandsConfig configCustomCommands;
     public Logger log;
     public List<ICommand> commands = new ArrayList<>();
     public BI18nManager i18n;
@@ -46,22 +45,24 @@ public class Botico
 
     public Path path;
     public Path pathConfig;
+    public Path pathConfigCustomCommands;
     public Path pathLogs;
 
     public CommandImage cmdImg;
 
-    public Botico(String clientName, Path path)
+    public Botico(IClientSpecificConfig cfg, Path path)
     {
-        this.clientName = clientName;
+        this.clientConfig = cfg;
         this.path = path;
         pathConfig = path.resolve("config.json");
         pathLogs = path.resolve("logs");
-        log = createLogger(pathLogs, clientName);
+        pathConfigCustomCommands = path.resolve("customcommands.json");
+        log = createLogger(pathLogs, cfg.getName());
     }
 
-    public Botico(String clientName)
+    public Botico(IClientSpecificConfig cfg)
     {
-        this(clientName, D.getWorkingDir().resolve("Botico"));
+        this(cfg, D.getWorkingDir().resolve("Botico"));
     }
 
     public static Logger createLogger(Path pathLogs, String clientName)
@@ -108,6 +109,7 @@ public class Botico
             }
         }
         loadConfig();
+        loadCustomCommandsConfig();
 
         log.info("Loading the SQL manager...");
         sql = new BSqlManager(this);
@@ -130,6 +132,47 @@ public class Botico
         log.info("Commands added!");
 
         log.info("Botico prepared!");
+    }
+
+    private void loadCustomCommandsConfig()
+    {
+        if (!Files.exists(pathConfigCustomCommands))
+        {
+            log.warn("Custom commands config doesn't exists! It will be created at " + pathConfigCustomCommands + ". You can set it up, if you want.");
+
+            CustomCommandsConfig cfg = new CustomCommandsConfig();
+            CustomCommandsConfig.Entry en = new CustomCommandsConfig.Entry();
+            en.hidden = false;
+            CustomCommandsConfig.Entry.LocaleSpecificEntry entr = new CustomCommandsConfig.Entry.LocaleSpecificEntry();
+            entr.text = "A simple custom command response.";
+            entr.description = "%1$s - try it!%nAlternatives: %2$s.";
+            entr.names = new String[]{"customcommand1", "cc1"};
+            CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry file = new CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry();
+            file.path = "image.png";
+            file.type = BFile.Type.IMAGE;
+            entr.files = new CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry[]{file};
+            en.entries.put("en", entr);
+            cfg.entries = new CustomCommandsConfig.Entry[]{en};
+
+            try (FileWriter wr = new FileWriter(pathConfigCustomCommands.toString()))
+            {
+                BConfig.GSON.toJson(cfg, wr);
+            } catch (IOException e)
+            {
+                log.error("Can't create an example custom commands config!", e);
+            }
+            configCustomCommands = new CustomCommandsConfig();
+        }
+
+        log.info("Loading the custom commands config file...");
+        try (FileReader rdr = new FileReader(pathConfigCustomCommands.toString()))
+        {
+            configCustomCommands = BConfig.GSON.fromJson(rdr, CustomCommandsConfig.class);
+            log.info("The custom commands config file successfully loaded!");
+        } catch (IOException e)
+        {
+            log.error("Can't load the custom commands config file!", e);
+        }
     }
 
     private void loadConfig()
@@ -177,7 +220,6 @@ public class Botico
     -Answer
     -Things
     -Dictionary
-    -Custom
     -Wolfram
     -Wiki
     -Who
@@ -197,6 +239,10 @@ public class Botico
         cmdImg.load(this);
         commands.add(cmdImg);
         commands.add(new CommandReactor());
+        for(CustomCommandsConfig.Entry e : configCustomCommands.entries)
+        {
+            commands.add(new CommandCustom(e));
+        }
     }
 
     public boolean hasCommand(String input, BUser user)
@@ -281,5 +327,10 @@ public class Botico
         if(cmd.contains(" "))
             cmd = cmd.substring(0, cmd.indexOf(" "));
         return cmd;
+    }
+
+    public IClientSpecificConfig getClientConfig()
+    {
+        return clientConfig;
     }
 }

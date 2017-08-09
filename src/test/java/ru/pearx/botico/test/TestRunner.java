@@ -1,6 +1,7 @@
 package ru.pearx.botico.test;
 
 import ru.pearx.botico.Botico;
+import ru.pearx.botico.IClientSpecificConfig;
 import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.BUser;
@@ -15,7 +16,20 @@ import java.util.Scanner;
  */
 public class TestRunner
 {
-    public static Botico botico = new Botico("Test");
+    public static Botico botico = new Botico(new IClientSpecificConfig()
+    {
+        @Override
+        public String getName()
+        {
+            return "Test Client";
+        }
+
+        @Override
+        public String createMention(BUser user)
+        {
+            return "@" + user.getName();
+        }
+    });
 
     public static void main(String... args) throws IOException
     {
@@ -31,7 +45,6 @@ public class TestRunner
                 if(botico.hasCommand(s, user))
                 {
                     BResponse resp = botico.useCommand(s, user);
-                    System.out.println("Alright, got a response.");
                     if(!resp.getText().equals(""))
                     {
                         System.out.println(resp.getText());
