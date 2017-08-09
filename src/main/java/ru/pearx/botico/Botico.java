@@ -177,13 +177,11 @@ public class Botico
     -Answer
     -Things
     -Dictionary
-    -Picture
     -Custom
     -Wolfram
     -Wiki
     -Who
     -Wall
-    -Reactor
     -Random
      */
     protected void addCommands()
@@ -198,6 +196,7 @@ public class Botico
         cmdImg = new CommandImage();
         cmdImg.load(this);
         commands.add(cmdImg);
+        commands.add(new CommandReactor());
     }
 
     public boolean hasCommand(String input, BUser user)

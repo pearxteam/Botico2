@@ -34,7 +34,7 @@ public class CommandImage extends CommandImpl
         {
             try(Statement st = conn.createStatement())
             {
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS `image_cache` (`query` VARCHAR(16383) NOT NULL, `expiresIn` DATETIME NOT NULL, `urls` VARCHAR(16383) NOT NULL, `mimes` VARCHAR(16383) NOT NULL, UNIQUE (`query`));");
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS `image_cache` (`query` VARCHAR(255) NOT NULL, `expiresIn` DATETIME NOT NULL, `urls` VARCHAR(16383) NOT NULL, `mimes` VARCHAR(16383) NOT NULL, UNIQUE (`query`));");
             }
         }
         catch (SQLException e)
