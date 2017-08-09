@@ -1,6 +1,7 @@
 package ru.pearx.botico.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -15,6 +16,12 @@ public class BResponse
     {
         this.text = text;
         this.files = files;
+    }
+
+    public BResponse(String text, BFile... files)
+    {
+        this.text = text;
+        this.files = Arrays.asList(files);
     }
 
     public BResponse(String text)

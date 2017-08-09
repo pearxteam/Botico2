@@ -41,12 +41,14 @@ public class Botico
     public BI18nManager i18n;
     public BTimeoutManager timeouts;
     public Random rand = new Random();
-    public GoogleApiUser gapi;
+    public GoogleApiUser gApi;
     public BSqlManager sql;
 
     public Path path;
     public Path pathConfig;
     public Path pathLogs;
+
+    public CommandImage cmdImg;
 
     public Botico(String clientName, Path path)
     {
@@ -111,7 +113,7 @@ public class Botico
         sql = new BSqlManager(this);
         log.info("The SQL manager successfully loaded!");
 
-        gapi = new GoogleApiUser(config.googleApiKeys);
+        gApi = new GoogleApiUser(config.googleApiKeys);
 
         log.info("Loading I18n...");
         i18n = new BI18nManager(this);
@@ -184,7 +186,7 @@ public class Botico
     -Reactor
     -Random
      */
-    public void addCommands()
+    protected void addCommands()
     {
         commands.add(new CommandHelp(this));
         commands.add(new CommandAbout());
@@ -193,7 +195,9 @@ public class Botico
         commands.add(new CommandTimeout());
         commands.add(new CommandTurn());
         commands.add(new CommandAstral());
-        commands.add(new CommandImage());
+        cmdImg = new CommandImage();
+        cmdImg.load(this);
+        commands.add(cmdImg);
     }
 
     public boolean hasCommand(String input, BUser user)

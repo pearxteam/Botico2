@@ -1,37 +1,94 @@
 package ru.pearx.botico.commands;
 
+import ru.pearx.botico.Botico;
 import ru.pearx.botico.model.BArgs;
+import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.CommandImpl;
+import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.PXL;
 import ru.pearx.lib.thirdparty.GoogleImageSearchResult;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 /*
  * Created by mrAppleXZ on 06.08.17 17:51.
  */
 public class CommandImage extends CommandImpl
 {
-    public Map<String, ImageCache> cache = new HashMap<>();
-
     public CommandImage()
     {
         super("command.image.names", "command.image.desc");
     }
 
-    public void load()
+    public void load(Botico b)
     {
-
+        try(Connection conn = b.sql.connect())
+        {
+            try(Statement st = conn.createStatement())
+            {
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS `image_cache` (`query` VARCHAR(16383) NOT NULL, `expiresIn` DATETIME NOT NULL, `urls` VARCHAR(16383) NOT NULL, `mimes` VARCHAR(16383) NOT NULL, UNIQUE (`query`));");
+            }
+        }
+        catch (SQLException e)
+        {
+            b.log.error("Can't create the image cache table!", e);
+        }
     }
 
-    public void save()
+    public Entry getRandomImage(String query, Botico b, Random rand) throws IOException
     {
+        try(Connection conn = b.sql.connect())
+        {
+            try(PreparedStatement st = conn.prepareStatement("SELECT `expiresIn`, `urls`, `mimes` FROM `image_cache` WHERE `query` = ?;"))
+            {
+                st.setString(1, query);
+                try(ResultSet set = st.executeQuery())
+                {
+                    if(set.next())
+                    {
+                        if(set.getTimestamp("expiresIn").toLocalDateTime().isAfter(LocalDateTime.now()))
+                        {
+                            String[] arr = set.getString("urls").split("\n");
+                            String[] mimes = set.getString("mimes").split("\n");
+                            int i = rand.nextInt(arr.length);
+                            return new Entry(arr[i], mimes[i]);
+                        }
+                    }
+                }
+            }
 
+            GoogleImageSearchResult res = b.gApi.searchImages(query, "001650684090692243479:q5zk7hv6vqg");
+            List<String> urls = new ArrayList<>();
+            List<String> mimes = new ArrayList<>();
+            for(GoogleImageSearchResult.Item itm : res.items)
+            {
+                urls.add(itm.link);
+                mimes.add(itm.mime);
+            }
+            try(PreparedStatement st = conn.prepareStatement("INSERT OR REPLACE INTO `image_cache` (query, expiresIn, urls, mimes) VALUES(?, ?, ?, ?);"))
+            {
+                st.setString(1, query);
+                st.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusDays(3)));
+                st.setString(3, String.join("\n", urls));
+                st.setString(4, String.join("\n", mimes));
+                st.executeUpdate();
+            }
+            int i = rand.nextInt(res.items.size());
+            return new Entry(urls.get(i), mimes.get(i));
+        }
+        catch (SQLException e)
+        {
+            b.log.error("Can't get the image cache from DB!");
+        }
+        return null;
     }
 
     @Override
@@ -41,8 +98,16 @@ public class CommandImage extends CommandImpl
         {
             try
             {
-                GoogleImageSearchResult res = args.getBotico().gapi.searchImages(args.getArgumentsJoined(), "001650684090692243479:q5zk7hv6vqg");
-
+                Entry entr = getRandomImage(args.getArgumentsJoined().replace(".", ""), args.getBotico(), args.getRand());;
+                if(args.getBotico().config.linksInsteadOfImages)
+                    return new BResponse(entr.getUrl());
+                else
+                    return new BResponse("", new BFile("image." + (LiteMimeMap.map.containsKey(entr.getMime()) ? LiteMimeMap.map.get(entr.getMime())[0] : "png"), new URL(entr.url).openStream(),
+                            entr.getMime().equals("image/svg+xml-compressed") ||
+                                    entr.getMime().equals("image/svg+xml") ||
+                                    entr.getMime().equals("image/webp") ||
+                                    entr.getMime().equals("image/gif") ||
+                                    entr.getMime().equals("image/x-webp") ? BFile.Type.ANIM_IMAGE : BFile.Type.IMAGE));
             }
             catch(IOException e)
             {
@@ -53,35 +118,35 @@ public class CommandImage extends CommandImpl
         return new BResponse(getDescription(args.getBotico(), args.getI18n()));
     }
 
-    public static class ImageCache
+    public static class Entry
     {
-        private List<String> urls;
-        private LocalDateTime expiresIn;
+        private String url;
+        private String mime;
 
-        public ImageCache(List<String> urls, LocalDateTime expiresIn)
+        public Entry(String url, String mime)
         {
-            this.urls = urls;
-            this.expiresIn = expiresIn;
+            this.url = url;
+            this.mime = mime;
         }
 
-        public List<String> getUrls()
+        public String getUrl()
         {
-            return urls;
+            return url;
         }
 
-        public void setUrls(List<String> urls)
+        public void setUrl(String url)
         {
-            this.urls = urls;
+            this.url = url;
         }
 
-        public LocalDateTime getExpiresIn()
+        public String getMime()
         {
-            return expiresIn;
+            return mime;
         }
 
-        public void setExpiresIn(LocalDateTime expiresIn)
+        public void setMime(String mime)
         {
-            this.expiresIn = expiresIn;
+            this.mime = mime;
         }
     }
 }

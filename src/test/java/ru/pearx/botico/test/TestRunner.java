@@ -31,6 +31,7 @@ public class TestRunner
                 if(botico.hasCommand(s, user))
                 {
                     BResponse resp = botico.useCommand(s, user);
+                    System.out.println("Alright, got a response.");
                     if(!resp.getText().equals(""))
                     {
                         System.out.println(resp.getText());
