@@ -98,7 +98,7 @@ public class CommandImage extends CommandImpl
         {
             try
             {
-                Entry entr = getRandomImage(args.getArgumentsJoined().replace(".", ""), args.getBotico(), args.getRand());;
+                Entry entr = getRandomImage(args.getArgumentsJoined().toLowerCase().replaceAll("\\p{P}", ""), args.getBotico(), args.getRand());;
                 if(args.getBotico().config.linksInsteadOfImages)
                     return new BResponse(entr.getUrl());
                 else
