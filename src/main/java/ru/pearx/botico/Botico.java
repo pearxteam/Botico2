@@ -251,7 +251,7 @@ public class Botico
         if(!input.startsWith(config.prefix))
             return false;
 
-       String cmd = clearCommandWithArgs(input);
+       String cmd = getCommandName(clearCommand(input));
 
         for(String alias : config.aliases.keySet())
         {
@@ -275,14 +275,14 @@ public class Botico
     {
         if(!input.startsWith(config.prefix))
             return new BResponse("");
-        String cmdName = clearCommandWithArgs(input);
         String cmd = clearCommand(input);
+        String cmdName = getCommandName(cmd);
         for(Map.Entry<String, String> entr : config.aliases.entrySet())
         {
             if(cmdName.equals(entr.getKey()))
             {
                 cmd = entr.getValue();
-                cmdName = entr.getValue();
+                cmdName = getCommandName(entr.getValue());
             }
         }
         I18n loc = i18n.getForUser(user.getId());
@@ -322,12 +322,11 @@ public class Botico
         return cmd;
     }
 
-    private String clearCommandWithArgs(String input)
+    private String getCommandName(String cmdWithArgs)
     {
-        String cmd = clearCommand(input);
-        if(cmd.contains(" "))
-            cmd = cmd.substring(0, cmd.indexOf(" "));
-        return cmd;
+        if(cmdWithArgs.contains(" "))
+            cmdWithArgs = cmdWithArgs.substring(0, cmdWithArgs.indexOf(" "));
+        return cmdWithArgs;
     }
 
     public IClientSpecificConfig getClientConfig()
