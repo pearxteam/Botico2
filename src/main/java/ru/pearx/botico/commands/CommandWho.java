@@ -21,7 +21,8 @@ public class CommandWho extends CommandImpl
         if(args.isInGroupChat())
         {
             BUser user = args.getGroupChatMembers().get(args.getRand().nextInt(args.getGroupChatMembers().size()));
-            return new BResponse(args.getI18n().format("command.who.text", args.getBotico().getClientConfig().createMention(user), args.getArgumentsJoined()));
+            String end = args.getArgumentsJoined().substring(args.getArgumentsJoined().length() - 1);
+            return new BResponse(args.getI18n().format("command.who.text", args.getBotico().getClientConfig().createMention(user), end.matches("\\p{P}") ? args.getArgumentsJoined().substring(0, args.getArgumentsJoined().length() - 1) : args.getArgumentsJoined()));
         }
         return new BResponse(args.getI18n().format("command.who.notInGroupChat"));
     }
