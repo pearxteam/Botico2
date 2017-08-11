@@ -244,6 +244,7 @@ public class Botico
         {
             commands.add(new CommandCustom(e));
         }
+        commands.add(new CommandWho());
     }
 
     public boolean hasCommand(String input, BUser user)
