@@ -315,7 +315,7 @@ public class Botico
 
     private String clearCommand(String input)
     {
-        String cmd = input.toLowerCase().substring(config.prefix.length());
+        String cmd = input.substring(config.prefix.length());
         while(cmd.startsWith(" "))
         {
             cmd = cmd.substring(1);
@@ -327,7 +327,7 @@ public class Botico
     {
         if(cmdWithArgs.contains(" "))
             cmdWithArgs = cmdWithArgs.substring(0, cmdWithArgs.indexOf(" "));
-        return cmdWithArgs;
+        return cmdWithArgs.toLowerCase();
     }
 
     public IClientSpecificConfig getClientConfig()
