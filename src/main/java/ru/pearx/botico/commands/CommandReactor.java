@@ -1,6 +1,5 @@
 package ru.pearx.botico.commands;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
@@ -8,9 +7,6 @@ import ru.pearx.botico.model.CommandImpl;
 import ru.pearx.lib.PXL;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,17 +1,7 @@
 package ru.pearx.botico;
 
-import com.google.gson.reflect.TypeToken;
-import ru.pearx.botico.config.BConfig;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
  * Created by mrAppleXZ on 05.08.17 23:11.

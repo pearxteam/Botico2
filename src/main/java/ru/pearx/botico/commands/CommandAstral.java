@@ -6,7 +6,6 @@ import ru.pearx.botico.model.CommandImpl;
 import ru.pearx.lib.RandomUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 /*
  * Created by mrAppleXZ on 06.08.17 13:37.

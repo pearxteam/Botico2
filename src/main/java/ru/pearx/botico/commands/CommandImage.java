@@ -11,7 +11,6 @@ import ru.pearx.lib.thirdparty.GoogleImageSearchResult;
 
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

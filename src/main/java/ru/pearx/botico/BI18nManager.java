@@ -1,20 +1,10 @@
 package ru.pearx.botico;
 
-import com.google.gson.reflect.TypeToken;
-import ru.pearx.botico.config.BConfig;
 import ru.pearx.lib.i18n.I18n;
 import ru.pearx.lib.i18n.I18nLoaderResources;
 import ru.pearx.lib.i18n.I18nManager;
 
-import java.awt.image.BandCombineOp;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
  * Created by mrAppleXZ on 04.08.17 19:18.

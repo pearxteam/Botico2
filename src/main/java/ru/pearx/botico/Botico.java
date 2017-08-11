@@ -151,7 +151,7 @@ public class Botico
             file.path = "image.png";
             file.type = BFile.Type.IMAGE;
             entr.files = new CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry[]{file};
-            en.entries.put("en", entr);
+            en.entries.put("en_us", entr);
             cfg.entries = new CustomCommandsConfig.Entry[]{en};
 
             try (FileWriter wr = new FileWriter(pathConfigCustomCommands.toString()))
@@ -192,6 +192,7 @@ public class Botico
             ex.aliases = map;
             ex.admins = new String[] {"0", "1"};
             ex.commandsOnOneHelpPage = 5;
+            ex.googleApiKeys = new String[] {"key1", "key2"};
             try(FileWriter wr = new FileWriter(pathConfig.toString()))
             {
                 BConfig.GSON.toJson(ex, wr);
