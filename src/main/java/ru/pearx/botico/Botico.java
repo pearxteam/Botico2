@@ -193,6 +193,11 @@ public class Botico
             ex.admins = new String[] {"0", "1"};
             ex.commandsOnOneHelpPage = 5;
             ex.googleApiKeys = new String[] {"key1", "key2"};
+            BConfig.WikiSource ws = new BConfig.WikiSource();
+            ws.displayName = "Wikipedia";
+            ws.apiUrl = "https://en.wikipedia.org/w/api.php";
+            ex.wikiSources = new BConfig.WikiSource[] {ws};
+            ex.mentions = false;
             try(FileWriter wr = new FileWriter(pathConfig.toString()))
             {
                 BConfig.GSON.toJson(ex, wr);
@@ -222,8 +227,6 @@ public class Botico
     -Things
     -Dictionary
     -Wolfram
-    -Wiki
-    -Who
     -Wall
     -Random
      */
@@ -245,6 +248,7 @@ public class Botico
             commands.add(new CommandCustom(e));
         }
         commands.add(new CommandWho());
+        commands.add(new CommandWiki());
     }
 
     public boolean hasCommand(String input, BUser user)
@@ -301,6 +305,8 @@ public class Botico
                     BResponse resp = com.use(new BArgs(cmd, cmdName, jargs, jargs.equals("") ? new String[]{} : jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, loc));
                     if(!config.lineBreaks)
                         resp.setText(resp.getText().replace("\r\n", "; ").replace("\r", "; ").replace("\n", "; "));
+                    if(resp.getText().length() > config.textLimit)
+                        resp.setText(resp.getText().substring(0, config.textLimit));
                     return resp;
                 }
             }

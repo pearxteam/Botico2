@@ -22,7 +22,7 @@ public class CommandLocale extends CommandImpl
     {
         if(args.getArguments().length > 0)
         {
-            if (Arrays.asList(args.getI18n().format("command.locale.list").split(",")).contains(args.getArguments()[0]))
+            if (Arrays.asList(args.getI18n().format("command.locale.list").split(",")).contains(args.getArguments()[0].toLowerCase()))
             {
                 StringBuilder bld = new StringBuilder();
                 for (Locale loc : args.getI18n().getAvailable())
@@ -35,7 +35,7 @@ public class CommandLocale extends CommandImpl
                 bld.delete(bld.length() - 2, bld.length());
                 return new BResponse(args.getI18n().format("command.locale.list.text", bld.toString()));
             }
-            if (Arrays.asList(args.getI18n().format("command.locale.set").split(",")).contains(args.getArguments()[0]))
+            if (Arrays.asList(args.getI18n().format("command.locale.set").split(",")).contains(args.getArguments()[0].toLowerCase()))
             {
                 if(args.getArguments().length > 1)
                 {

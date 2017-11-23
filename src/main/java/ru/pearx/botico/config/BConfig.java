@@ -21,4 +21,12 @@ public class BConfig
     public Map<String, String> aliases;
     public int commandsOnOneHelpPage;
     public String[] googleApiKeys;
+    public WikiSource[] wikiSources;
+    public boolean mentions;
+
+    public static class WikiSource
+    {
+        public String displayName;
+        public String apiUrl;
+    }
 }

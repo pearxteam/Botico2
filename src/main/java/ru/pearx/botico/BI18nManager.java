@@ -1,5 +1,6 @@
 package ru.pearx.botico;
 
+import ru.pearx.lib.ResourceContainer;
 import ru.pearx.lib.i18n.I18n;
 import ru.pearx.lib.i18n.I18nLoaderResources;
 import ru.pearx.lib.i18n.I18nManager;
@@ -37,7 +38,7 @@ public class BI18nManager extends I18nManager
     public I18n createI18n(String locale)
     {
         I18nLoaderResources loader = new I18nLoaderResources();
-        loader.getPaths().add("assets/botico/lang");
+        loader.getContainers().add(new ResourceContainer(Botico.class, "assets/botico/lang"));
         I18n i18n = new I18n(loader, botico.config.defaultLanguage);
         i18n.load(locale);
         return i18n;
