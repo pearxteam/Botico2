@@ -44,8 +44,10 @@ public class CommandWiki extends CommandImpl
             {
                 boolean auto = Arrays.asList(args.getI18n().format("command.wiki.auto").split(",")).contains(args.getArguments()[0].toLowerCase());
                 String page = args.getArgumentsJoined().substring(args.getArguments()[0].length() + 1);
-                for (BConfig.WikiSource source : args.getBotico().config.wikiSources)
+                for (int i = 0; i < args.getBotico().config.wikiSources.length; i++)
                 {
+                    BConfig.WikiSource source = args.getBotico().config.wikiSources[i];
+                    boolean fin = i == args.getBotico().config.wikiSources.length - 1;
                     if (auto || source.displayName.equalsIgnoreCase(args.getArguments()[0]))
                     {
                         try
@@ -54,7 +56,7 @@ public class CommandWiki extends CommandImpl
                         }
                         catch (MediawikiException e)
                         {
-                            if(auto) continue;
+                            if(auto && !fin) continue;
                             if (e.getError().code.equals("missingtitle"))
                                 return new BResponse(args.getI18n().format("command.wiki.notFound"));
                             args.getBotico().log.error("An exception occurred when trying to get MediaWiki result!", e);
@@ -62,7 +64,6 @@ public class CommandWiki extends CommandImpl
                         }
                         catch (Exception e)
                         {
-                            if(auto) continue;
                             args.getBotico().log.error("An exception occurred when trying to get MediaWiki result!", e);
                             return new BResponse(args.getI18n().format("command.wiki.error", e.getMessage()));
                         }
