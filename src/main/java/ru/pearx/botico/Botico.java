@@ -249,6 +249,7 @@ public class Botico
         }
         commands.add(new CommandWho());
         commands.add(new CommandWiki());
+        commands.add(new CommandGC());
     }
 
     public boolean hasCommand(String input, BUser user)
