@@ -10,12 +10,14 @@ public class BFile
     private String name;
     private InputStream stream;
     private Type type;
+    private String mimeType;
 
-    public BFile(String name, InputStream stream, Type type)
+    public BFile(String name, InputStream stream, Type type, String mimeType)
     {
         this.name = name;
         this.stream = stream;
         this.type = type;
+        this.mimeType = mimeType;
     }
 
     public String getName()
@@ -26,6 +28,11 @@ public class BFile
     public InputStream getStream()
     {
         return stream;
+    }
+
+    public String getMimeType()
+    {
+        return mimeType;
     }
 
     public Type getType()

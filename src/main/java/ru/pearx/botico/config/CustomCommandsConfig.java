@@ -1,5 +1,6 @@
 package ru.pearx.botico.config;
 
+import com.google.gson.annotations.SerializedName;
 import ru.pearx.botico.model.BFile;
 
 import java.util.HashMap;
@@ -10,11 +11,14 @@ import java.util.Map;
  */
 public class CustomCommandsConfig
 {
+    @SerializedName("entries")
     public Entry[] entries;
 
     public static class Entry
     {
+        @SerializedName("hidden")
         public boolean hidden;
+        @SerializedName("entries")
         public Map<String, LocaleSpecificEntry> entries = new HashMap<>();
 
         public LocaleSpecificEntry getLocaleSpecificEntry(String locale, String def)
@@ -28,15 +32,23 @@ public class CustomCommandsConfig
 
         public static class LocaleSpecificEntry
         {
+            @SerializedName("names")
             public String[] names;
+            @SerializedName("description")
             public String description;
+            @SerializedName("text")
             public String text;
+            @SerializedName("files")
             public FileEntry[] files;
 
             public static class FileEntry
             {
+                @SerializedName("path")
                 public String path;
+                @SerializedName("type")
                 public BFile.Type type;
+                @SerializedName("mimeType")
+                public String mimeType;
             }
         }
     }

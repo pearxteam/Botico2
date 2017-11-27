@@ -150,6 +150,7 @@ public class Botico
             CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry file = new CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry();
             file.path = "image.png";
             file.type = BFile.Type.IMAGE;
+            file.mimeType = "image/png";
             entr.files = new CustomCommandsConfig.Entry.LocaleSpecificEntry.FileEntry[]{file};
             en.entries.put("en_us", entr);
             cfg.entries = new CustomCommandsConfig.Entry[]{en};
@@ -277,9 +278,14 @@ public class Botico
         return false;
     }
 
+    public boolean isValidInput(String input)
+    {
+        return input != null && input.startsWith(config.prefix);
+    }
+
     public BResponse useCommand(String input, BUser user, boolean group, List<BUser> chatMembers)
     {
-        if(!input.startsWith(config.prefix))
+        if(!isValidInput(input))
             return new BResponse("");
         String cmd = clearCommand(input);
         String cmdName = getCommandName(cmd);
@@ -306,7 +312,7 @@ public class Botico
                     BResponse resp = com.use(new BArgs(cmd, cmdName, jargs, jargs.equals("") ? new String[]{} : jargs.split(" "), user, group, this, rand, chatMembers, config.prefix, loc));
                     if(!config.lineBreaks)
                         resp.setText(resp.getText().replace("\r\n", "; ").replace("\r", "; ").replace("\n", "; "));
-                    if(resp.getText().length() > config.textLimit)
+                    if(config.textLimit >= 0 && resp.getText().length() > config.textLimit)
                         resp.setText(resp.getText().substring(0, config.textLimit));
                     return resp;
                 }

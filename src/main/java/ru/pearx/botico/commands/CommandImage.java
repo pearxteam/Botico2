@@ -106,7 +106,7 @@ public class CommandImage extends CommandImpl
                                     entr.getMime().equals("image/svg+xml") ||
                                     entr.getMime().equals("image/webp") ||
                                     entr.getMime().equals("image/gif") ||
-                                    entr.getMime().equals("image/x-webp") ? BFile.Type.ANIM_IMAGE : BFile.Type.IMAGE));
+                                    entr.getMime().equals("image/x-webp") ? BFile.Type.ANIM_IMAGE : BFile.Type.IMAGE, entr.getMime()));
             }
             catch(IOException e)
             {

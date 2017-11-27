@@ -4,12 +4,14 @@ import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.CommandImpl;
+import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.PXL;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +59,7 @@ public class CommandReactor extends CommandImpl
                         } else
                         {
                             URL u = new URL(img);
-                            return new BResponse("", new BFile(PXL.decodeUrl(u.getPath().substring(u.getPath().lastIndexOf("/") + 1)), u.openStream(), u.getPath().endsWith(".gif") ? BFile.Type.ANIM_IMAGE : BFile.Type.IMAGE));
+                            return new BResponse("", new BFile(PXL.decodeUrl(u.getPath().substring(u.getPath().lastIndexOf("/") + 1)), u.openStream(), u.getPath().endsWith(".gif") ? BFile.Type.ANIM_IMAGE : BFile.Type.IMAGE, LiteMimeMap.getMimeForFilename(u.getPath())));
                         }
                     }
                 }
