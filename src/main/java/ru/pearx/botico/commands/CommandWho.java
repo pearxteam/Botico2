@@ -1,13 +1,11 @@
 package ru.pearx.botico.commands;
 
-import ru.pearx.botico.model.BArgs;
-import ru.pearx.botico.model.BResponse;
-import ru.pearx.botico.model.BUser;
-import ru.pearx.botico.model.CommandImpl;
+import ru.pearx.botico.model.*;
 
 /*
  * Created by mrAppleXZ on 11.08.17 16:03.
  */
+
 public class CommandWho extends CommandImpl
 {
     public CommandWho()

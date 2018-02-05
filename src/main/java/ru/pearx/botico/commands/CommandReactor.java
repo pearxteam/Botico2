@@ -1,9 +1,6 @@
 package ru.pearx.botico.commands;
 
-import ru.pearx.botico.model.BArgs;
-import ru.pearx.botico.model.BFile;
-import ru.pearx.botico.model.BResponse;
-import ru.pearx.botico.model.CommandImpl;
+import ru.pearx.botico.model.*;
 import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.PXL;
 
@@ -11,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +15,7 @@ import java.util.regex.Pattern;
 /*
  * Created by mrAppleXZ on 09.08.17 9:06.
  */
+
 public class CommandReactor extends CommandImpl
 {
     public CommandReactor()

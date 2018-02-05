@@ -251,6 +251,7 @@ public class Botico
         commands.add(new CommandWho());
         commands.add(new CommandWiki());
         commands.add(new CommandGC());
+        commands.add(new CommandPercent());
     }
 
     public boolean hasCommand(String input, BUser user)

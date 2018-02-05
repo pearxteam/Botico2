@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 /*
  * Created by mrAppleXZ on 05.08.17 23:03.
  */
+
 public class CommandRussianRoulette extends CommandImpl
 {
     public CommandRussianRoulette()

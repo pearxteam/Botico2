@@ -1,10 +1,7 @@
 package ru.pearx.botico.commands;
 
 import ru.pearx.botico.Botico;
-import ru.pearx.botico.model.BArgs;
-import ru.pearx.botico.model.BFile;
-import ru.pearx.botico.model.BResponse;
-import ru.pearx.botico.model.CommandImpl;
+import ru.pearx.botico.model.*;
 import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.PXL;
 import ru.pearx.lib.thirdparty.GoogleImageSearchResult;

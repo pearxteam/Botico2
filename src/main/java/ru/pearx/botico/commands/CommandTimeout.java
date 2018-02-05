@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 /*
  * Created by mrAppleXZ on 06.08.17 0:01.
  */
+
 public class CommandTimeout extends CommandImpl
 {
     public CommandTimeout()

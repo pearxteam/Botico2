@@ -4,19 +4,15 @@ import ru.pearx.botico.config.BConfig;
 import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.CommandImpl;
-import ru.pearx.lib.PXL;
 import ru.pearx.lib.thirdparty.MediawikiException;
-import ru.pearx.lib.thirdparty.MediawikiParseResult;
 import ru.pearx.lib.thirdparty.MediawikiUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /*
  * Created by mrAppleXZ on 11.08.17 21:25.
  */
+
 public class CommandWiki extends CommandImpl
 {
     public CommandWiki()

@@ -6,7 +6,6 @@ import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BFile;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.ICommand;
-import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.i18n.I18n;
 
 import java.io.FileInputStream;
@@ -14,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /*
  * Created by mrAppleXZ on 09.08.17 14:34.

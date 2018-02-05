@@ -1,10 +1,7 @@
 package ru.pearx.botico.commands;
 
 import ru.pearx.botico.Botico;
-import ru.pearx.botico.model.BArgs;
-import ru.pearx.botico.model.BResponse;
-import ru.pearx.botico.model.CommandImpl;
-import ru.pearx.botico.model.ICommand;
+import ru.pearx.botico.model.*;
 
 /*
  * Created by mrAppleXZ on 06.08.17 10:18.

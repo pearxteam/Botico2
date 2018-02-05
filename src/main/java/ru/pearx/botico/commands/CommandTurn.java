@@ -8,6 +8,7 @@ import ru.pearx.lib.PXL;
 /*
  * Created by mrAppleXZ on 06.08.17 10:09.
  */
+
 public class CommandTurn extends CommandImpl
 {
     public CommandTurn()
