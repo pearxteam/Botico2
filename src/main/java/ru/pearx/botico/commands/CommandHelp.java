@@ -59,12 +59,16 @@ public class CommandHelp extends CommandImpl
             sb.append("\n");
             for(int i = from; i < from + args.getBotico().config.commandsOnOneHelpPage; i++)
             {
-                if(i >= args.getBotico().commands.size())
+                if (i >= args.getBotico().commands.size())
                     break;
-                sb.append(args.getBotico().commands.get(i).getDescription(args.getBotico(), args.getI18n()));
-                sb.append("\n");
-                sb.append("---");
-                sb.append("\n");
+                ICommand cmd = args.getBotico().commands.get(i);
+                if (!cmd.isHidden(args.getBotico()))
+                {
+                    sb.append(cmd.getDescription(args.getBotico(), args.getI18n()));
+                    sb.append("\n");
+                    sb.append("---");
+                    sb.append("\n");
+                }
             }
             sb.append(args.getI18n().format("command.help.page", page, pagesCount));
             return new BResponse(sb.toString());
