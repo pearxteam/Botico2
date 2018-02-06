@@ -4,7 +4,7 @@ import ru.pearx.botico.Botico;
 import ru.pearx.botico.model.*;
 import ru.pearx.lib.LiteMimeMap;
 import ru.pearx.lib.PXL;
-import ru.pearx.lib.thirdparty.GoogleImageSearchResult;
+import ru.pearx.lib.thirdparty.google.GoogleImageSearchResult;
 
 import java.io.IOException;
 import java.net.URL;

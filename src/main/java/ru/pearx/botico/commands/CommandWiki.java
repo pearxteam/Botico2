@@ -4,8 +4,8 @@ import ru.pearx.botico.config.BConfig;
 import ru.pearx.botico.model.BArgs;
 import ru.pearx.botico.model.BResponse;
 import ru.pearx.botico.model.CommandImpl;
-import ru.pearx.lib.thirdparty.MediawikiException;
-import ru.pearx.lib.thirdparty.MediawikiUtils;
+import ru.pearx.lib.thirdparty.mediawiki.MediawikiException;
+import ru.pearx.lib.thirdparty.mediawiki.MediawikiUtils;
 
 import java.util.Arrays;
 

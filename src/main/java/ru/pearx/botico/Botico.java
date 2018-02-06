@@ -14,7 +14,7 @@ import ru.pearx.botico.model.*;
 import ru.pearx.botico.config.BConfig;
 import ru.pearx.lib.D;
 import ru.pearx.lib.i18n.I18n;
-import ru.pearx.lib.thirdparty.GoogleApiUser;
+import ru.pearx.lib.thirdparty.google.GoogleApiUser;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -252,6 +252,7 @@ public class Botico
         commands.add(new CommandWiki());
         commands.add(new CommandGC());
         commands.add(new CommandPercent());
+        commands.add(new CommandBash());
     }
 
     public boolean hasCommand(String input, BUser user)
