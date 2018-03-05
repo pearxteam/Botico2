@@ -1,0 +1,9 @@
+files:
+  - source: /src/main/resources/assets/botico/lang/*.properties
+    ignore:
+      - /src/main/resources/assets/botico/lang/langs.properties
+    translation: /src/main/resources/assets/botico/lang/%language%.new.properties
+    languages_mapping:
+      language:
+        en: en_us
+        ru: ru_ru
