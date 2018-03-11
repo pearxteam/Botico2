@@ -88,6 +88,11 @@ public class BArgs
         return groupChatMembers;
     }
 
+    public BUser getRandomGroupChatMember()
+    {
+        return getGroupChatMembers().get(getRand().nextInt(getGroupChatMembers().size()));
+    }
+
     /**
      * Returns the command prefix.
      */
