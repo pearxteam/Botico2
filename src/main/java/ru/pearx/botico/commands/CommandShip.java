@@ -20,7 +20,7 @@ public class CommandShip extends CommandImpl
     {
         if(args.isInGroupChat())
         {
-            return new BResponse(args.getI18n().format("command.ship.text", args.getBotico().getClientConfig().createMention(args.getRandomGroupChatMember()), args.getBotico().getClientConfig().createMention(args.getRandomGroupChatMember())));
+            return new BResponse(args.getI18n().format("command.ship.text", args.getBotico().createMention(args.getRandomGroupChatMember()), args.getBotico().createMention(args.getRandomGroupChatMember())));
         }
         return new BResponse(args.getI18n().format("command.ship.notInGroupChat"));
     }

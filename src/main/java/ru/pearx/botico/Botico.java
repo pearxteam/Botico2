@@ -94,6 +94,11 @@ public class Botico
         return log;
     }
 
+    public String createMention(BUser u)
+    {
+        return config.mentions ? getClientConfig().createMention(u) : u.getName();
+    }
+
     public void prepare()
     {
         log.info("Preparing Botico...");
